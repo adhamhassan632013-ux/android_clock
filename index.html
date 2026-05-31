@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS StandBy Clock - Smooth Wave Blend</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Varela+Round&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            font-family: 'Varela Round', -apple-system, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #clock-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: row; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16vw; 
+        }
+
+        .time-display {
+            font-size: 16vw; 
+            font-weight: 700;
+            font-family: 'Varela Round', sans-serif; 
+            letter-spacing: -0.4vw;
+            line-height: 1;
+            user-select: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .digit-container {
+            display: inline-block;
+            position: relative;
+            width: 1.1ch; 
+            text-align: center;
+            background: linear-gradient(to bottom, #0011aa 20%, #0055ff 50%, #d6f0ff 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: wave-animation 4s ease-in-out infinite;
+        }
+
+        #h1 { animation-delay: 0s; }
+        #h2 { animation-delay: 0.2s; }
+        #m1 { animation-delay: 0.4s; }
+        #m2 { animation-delay: 0.6s; }
+
+        @keyframes wave-animation {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-1.2vw); } 
+        }
+
+        .separator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 0.4ch;
+            margin: 0 0.5vw;
+            background: linear-gradient(to bottom, #0011aa 20%, #0055ff 50%, #d6f0ff 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: separator-blink 1s linear infinite;
+        }
+
+        @keyframes separator-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            align-items: flex-end; 
+            height: 60vh; 
+            min-width: 25vw;
+            text-align: right;
+        }
+
+        .date-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 0.85;
+        }
+
+        .day-text {
+            font-family: 'Alex Brush', cursive, sans-serif;
+            font-size: 6vw; 
+            font-weight: bold;
+            color: #0055ff; 
+            text-transform: lowercase;
+            text-shadow: 0 0 10px rgba(0, 85, 255, 0.25);
+        }
+
+        .date-text {
+            font-family: 'Alex Brush', cursive, sans-serif;
+            font-size: 7vw; 
+            font-weight: bold;
+            color: #0044dd; 
+            margin-top: -0.2vw;
+        }
+
+        .brand-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .by-text {
+            font-family: 'Alex Brush', cursive, sans-serif;
+            font-size: 5vw; 
+            font-weight: bold;
+            color: #0077ff; 
+            text-shadow: 0 0 12px rgba(0, 119, 255, 0.35);
+            text-transform: lowercase;
+            opacity: 0.9;
+            line-height: 0.85; 
+        }
+
+        .signature-box {
+            font-family: 'Alex Brush', cursive, sans-serif;
+            font-size: 4.5vw; 
+            color: #d6f0ff; 
+            text-shadow: 0 0 10px rgba(214, 240, 255, 0.35);
+            line-height: 1;
+            user-select: none;
+            margin-top: 1vw; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="clock-container">
+        <div class="time-display">
+            <div class="digit-container" id="h1"></div>
+            <div class="digit-container" id="h2"></div>
+            <div class="separator">:</div>
+            <div class="digit-container" id="m1"></div>
+            <div class="digit-container" id="m2"></div>
+        </div>
+
+        <div class="right-column">
+            <div class="date-box">
+                <span class="day-text" id="day-name"></span>
+                <span class="date-text" id="day-number"></span>
+            </div>
+            
+            <div class="brand-group">
+                <span class="by-text">created<br>by</span>
+                <span class="signature-box">Adham</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            
+            const hStr = (hours < 10 ? '0' : '') + hours;
+            const mStr = (minutes < 10 ? '0' : '') + minutes;
+
+            document.getElementById('h1').innerHTML = hStr.charAt(0);
+            document.getElementById('h2').innerHTML = hStr.charAt(1);
+            document.getElementById('m1').innerHTML = mStr.charAt(0);
+            document.getElementById('m2').innerHTML = mStr.charAt(1);
+
+            const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            const dayName = days[now.getDay()];
+            const dayNumber = now.getDate();
+
+            const dayNameEl = document.getElementById('day-name');
+            const dayNumberEl = document.getElementById('day-number');
+            
+            if (dayNameEl) dayNameEl.innerHTML = dayName;
+            if (dayNumberEl) dayNumberEl.innerHTML = dayNumber;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
